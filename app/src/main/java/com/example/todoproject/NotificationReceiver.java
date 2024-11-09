@@ -3,6 +3,8 @@ package com.example.todoproject;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -10,6 +12,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d("NotificationReceiver", "Notification triggered");
+
         int taskId = intent.getIntExtra("task_id", -1);
 
         // Get task details from database based on taskId
@@ -26,5 +30,7 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(taskId, builder.build());
+
+        Log.d("NotificationReceiver", "Notification sent for task: " + task.getTitle());
     }
 }
