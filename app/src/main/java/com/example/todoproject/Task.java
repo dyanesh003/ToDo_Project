@@ -21,6 +21,12 @@ public class Task {
         this.description = description;
     }
 
+
+    public void setDueDate(String dueDate) {
+        this.dueDate = dueDate;
+    }
+
+
     public int getId() { return id; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }

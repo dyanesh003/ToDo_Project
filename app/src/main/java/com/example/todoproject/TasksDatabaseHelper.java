@@ -51,9 +51,10 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put("title", title);
         values.put("description", description);
-        values.put("dueDate", dueDate);
+        values.put("dueDate", dueDate);  // Store the full date and time string
         return db.update(TABLE_NAME, values, "id = ?", new String[]{String.valueOf(id)});
     }
+
 
     public int markTaskAsCompleted(int id) {
         SQLiteDatabase db = this.getWritableDatabase();

@@ -15,6 +15,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class AddTaskActivity extends AppCompatActivity {
+
     private EditText editTitle, editDescription;
     private TextView txtDueDate;
     private int selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute;
@@ -44,55 +45,55 @@ public class AddTaskActivity extends AppCompatActivity {
         });
     }
 
+    // Method to show the DatePickerDialog
     private void showDatePicker() {
-        // Initialize calendar for current date
         final Calendar calendar = Calendar.getInstance();
         selectedYear = calendar.get(Calendar.YEAR);
         selectedMonth = calendar.get(Calendar.MONTH);
         selectedDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Show date picker dialog
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                 (view, year, monthOfYear, dayOfMonth) -> {
                     selectedYear = year;
                     selectedMonth = monthOfYear;
                     selectedDay = dayOfMonth;
-                    showTimePicker(); // Call the time picker after date selection
+                    showTimePicker(); // Call time picker after date selection
                 },
                 selectedYear, selectedMonth, selectedDay);
         datePickerDialog.show();
     }
 
+    // Method to show the TimePickerDialog
     private void showTimePicker() {
-        // Initialize current time
         final Calendar calendar = Calendar.getInstance();
         selectedHour = calendar.get(Calendar.HOUR_OF_DAY);
         selectedMinute = calendar.get(Calendar.MINUTE);
 
-        // Show time picker dialog
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 (view, hourOfDay, minute) -> {
                     selectedHour = hourOfDay;
                     selectedMinute = minute;
-                    // Combine date and time to show in the TextView
+                    // Combine the selected date and time to show in the TextView
                     String dateTime = String.format(Locale.getDefault(),
                             "%02d-%02d-%d %02d:%02d", selectedDay, selectedMonth + 1, selectedYear, selectedHour, selectedMinute);
-                    txtDueDate.setText(dateTime);
+                    txtDueDate.setText(dateTime); // Display combined date and time
                 },
                 selectedHour, selectedMinute, true);
         timePickerDialog.show();
     }
 
+    // Method to add a task with the selected date and time
     private void addTask() {
         String title = editTitle.getText().toString().trim();
         String description = editDescription.getText().toString().trim();
-        String dueDate = txtDueDate.getText().toString().trim();
+        String dueDate = txtDueDate.getText().toString().trim(); // Due date and time
 
         if (title.isEmpty() || dueDate.isEmpty()) {
             Toast.makeText(this, "Title and Date are required", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        // Insert task into the database
         long result = dbHelper.insertTask(title, description, dueDate);
         if (result != -1) {
             Toast.makeText(this, "Task added successfully", Toast.LENGTH_SHORT).show();
