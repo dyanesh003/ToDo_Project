@@ -81,6 +81,22 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         return tasks;
     }
 
+    public Task getTaskById(int taskId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_NAME, null, "id = ?", new String[]{String.valueOf(taskId)}, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndex("id"));
+            String title = cursor.getString(cursor.getColumnIndex("title"));
+            String description = cursor.getString(cursor.getColumnIndex("description"));
+            String dueDate = cursor.getString(cursor.getColumnIndex("dueDate"));
+            cursor.close();
+            return new Task(id, title, description, dueDate);
+        } else {
+            return null;
+        }
+    }
+
     public ArrayList<String> getCompletedTasksOrderedByDueDate() {
         ArrayList<String> completedTasks = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
