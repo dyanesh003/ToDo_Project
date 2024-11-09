@@ -80,6 +80,22 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         return tasks;
     }
 
+    public ArrayList<String> getCompletedTasksOrderedByDueDate() {
+        ArrayList<String> completedTasks = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT title, dueDate FROM tasks WHERE isCompleted = 1 ORDER BY dueDate DESC", null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+                String dueDate = cursor.getString(cursor.getColumnIndexOrThrow("dueDate"));
+                completedTasks.add(title + " - Due: " + dueDate);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        return completedTasks;
+    }
+
     public int deleteTask(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         return db.delete(TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
