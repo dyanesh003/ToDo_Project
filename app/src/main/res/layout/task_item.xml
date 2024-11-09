@@ -19,24 +19,23 @@
         android:layout_below="@id/taskTitle"
         android:textSize="14sp"/>
 
-    <Button
-        android:id="@+id/completeButton"
+    <!-- Single edit icon to trigger the popup -->
+    <ImageButton
+        android:id="@+id/btnEditTask"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:text="Complete" />
+        android:background="?android:selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_edit" />
 
-    <Button
-        android:id="@+id/editButton"
+    <TextView
+        android:id="@+id/taskDueDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/completeButton"
-        android:text="Edit" />
+        android:layout_below="@id/taskDescription"
+        android:textSize="12sp"
+        android:textColor="#757575"
+        android:layout_marginTop="8dp"/>
 
-    <Button
-        android:id="@+id/deleteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toLeftOf="@id/editButton"
-        android:text="Delete" />
+
 </RelativeLayout>
