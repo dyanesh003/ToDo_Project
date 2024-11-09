@@ -2,6 +2,7 @@ package com.example.todoproject;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import android.content.Context;
 
 public class AddTaskActivity extends AppCompatActivity {
 
@@ -84,7 +84,7 @@ public class AddTaskActivity extends AppCompatActivity {
     }
 
     // Method to add a task with the selected date and time
-    public void addTask() {
+    private void addTask() {
         String title = editTitle.getText().toString().trim();
         String description = editDescription.getText().toString().trim();
         String dueDate = txtDueDate.getText().toString().trim(); // Due date and time
@@ -97,14 +97,16 @@ public class AddTaskActivity extends AppCompatActivity {
         // Insert task into the database
         long result = dbHelper.insertTask(title, description, dueDate);
         if (result != -1) {
-            // Create Task object
+            // Task successfully added to the database
+            Toast.makeText(this, "Task added successfully", Toast.LENGTH_SHORT).show();
+
+            // Create a Task object with the details
             Task task = new Task((int) result, title, description, dueDate);
 
-            // Schedule the notification
-            NotificationManager notificationManager = new NotificationManager();
-            notificationManager.scheduleTaskDeadlineNotification(AddTaskActivity.this, task);
+            // Schedule the notification for the task's deadline
+            scheduleTaskDeadlineNotification(AddTaskActivity.this, task);
 
-            // Redirect to HomeActivity
+            // Redirect to the HomeActivity
             Intent intent = new Intent(AddTaskActivity.this, HomeActivity.class);
             startActivity(intent);
             finish();
@@ -112,8 +114,6 @@ public class AddTaskActivity extends AppCompatActivity {
             Toast.makeText(this, "Failed to add task", Toast.LENGTH_SHORT).show();
         }
     }
-
-
 
     // Method to schedule the task deadline notification
     public void scheduleTaskDeadlineNotification(Context context, Task task) {
