@@ -14,7 +14,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        createNotificationChannel();
         setContentView(R.layout.activity_main);
 
         // Delay for 2 seconds
@@ -23,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }, 2000); // 2000 milliseconds = 2 seconds
+        createNotificationChannel();
     }
 
     public void createNotificationChannel() {

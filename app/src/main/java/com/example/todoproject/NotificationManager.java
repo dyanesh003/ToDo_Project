@@ -19,6 +19,8 @@ public class NotificationManager {
         return PendingIntent.getBroadcast(context, taskId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+
+
     // Method to schedule the task deadline notification
     public void scheduleTaskDeadlineNotification(Context context, Task task) {
         Calendar calendar = Calendar.getInstance();

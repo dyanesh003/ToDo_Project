@@ -96,12 +96,39 @@ public class AddTaskActivity extends AppCompatActivity {
         // Insert task into the database
         long result = dbHelper.insertTask(title, description, dueDate);
         if (result != -1) {
+            // Task successfully added to the database
             Toast.makeText(this, "Task added successfully", Toast.LENGTH_SHORT).show();
+
+            // Create a Task object with the details
+            Task task = new Task((int) result, title, description, dueDate);
+
+            // Schedule the notification for the task's deadline
+            scheduleTaskDeadlineNotification(AddTaskActivity.this, task);
+
+            // Redirect to the HomeActivity
             Intent intent = new Intent(AddTaskActivity.this, HomeActivity.class);
             startActivity(intent);
             finish();
         } else {
             Toast.makeText(this, "Failed to add task", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Method to schedule the task deadline notification
+    public void scheduleTaskDeadlineNotification(Context context, Task task) {
+        // Ensure the date format matches the one entered by the user (e.g., dd-MM-yyyy HH:mm)
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.getDefault());
+        try {
+            // Parse the due date string into a Date object
+            java.util.Date dueDate = sdf.parse(task.getDueDate());
+            if (dueDate != null) {
+                // Schedule the alarm (notification)
+                NotificationManager notificationManager = new NotificationManager();
+                notificationManager.scheduleTaskDeadlineNotification(context, task);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(context, "Invalid date format", Toast.LENGTH_SHORT).show();
         }
     }
 }
