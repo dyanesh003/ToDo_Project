@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 
-
 public class TasksDatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "tasks.db";
@@ -25,7 +24,6 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "title TEXT NOT NULL," +
                 "description TEXT," +
-//                "createdTime DATETIME DEFAULT CURRENT_TIMESTAMP," +
                 "dueDate DATETIME," +
                 "isCompleted INTEGER DEFAULT 0" +
                 ");";
@@ -38,61 +36,52 @@ public class TasksDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // Insert a new task
-    public long insertTask(String title, String description, String dueDate, int priority, String type) {
+    public long insertTask(String title, String description, String dueDate) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("title", title);
         values.put("description", description);
         values.put("dueDate", dueDate);
-        values.put("isCompleted",0);
+        values.put("isCompleted", 0);
         return db.insert(TABLE_NAME, null, values);
     }
 
-
-    // Method to update a task based on its original title
-    public int updateTask(String originalTitle, String newTitle, String newDescription, String newDueDate, int newPriority, String newType) {
+    public int updateTask(int id, String title, String description, String dueDate) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put("title", newTitle);
-        values.put("description", newDescription);
-        values.put("dueDate", newDueDate);
-        values.put("priority", newPriority);
-        values.put("type", newType);
-
-        // Update the task where the title matches the original title
-        return db.update(TABLE_NAME, values, "title = ?", new String[]{originalTitle});
+        values.put("title", title);
+        values.put("description", description);
+        values.put("dueDate", dueDate);
+        return db.update(TABLE_NAME, values, "id = ?", new String[]{String.valueOf(id)});
     }
 
-    // Method to fetch completed tasks ordered by due date (recent first)
-    public ArrayList<String> getCompletedTasksOrderedByDueDate() {
-        ArrayList<String> completedTasks = new ArrayList<>();
+    public int markTaskAsCompleted(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("isCompleted", 1);
+        return db.update(TABLE_NAME, values, "id = ?", new String[]{String.valueOf(id)});
+    }
+
+    public ArrayList<Task> getTasks() {
+        ArrayList<Task> tasks = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT title, dueDate FROM tasks WHERE isCompleted = 1 ORDER BY dueDate DESC", null);
+        Cursor cursor = db.query(TABLE_NAME, null, "isCompleted = 0", null, null, null, null);
 
         if (cursor.moveToFirst()) {
             do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
                 String title = cursor.getString(cursor.getColumnIndexOrThrow("title"));
+                String description = cursor.getString(cursor.getColumnIndexOrThrow("description"));
                 String dueDate = cursor.getString(cursor.getColumnIndexOrThrow("dueDate"));
-                completedTasks.add(title + " - Due: " + dueDate);
+                tasks.add(new Task(id, title, description, dueDate));
             } while (cursor.moveToNext());
         }
         cursor.close();
-        return completedTasks;
+        return tasks;
     }
 
-    // Method to delete a task by its id
     public int deleteTask(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        // Delete the task where the id matches
         return db.delete(TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
     }
-
-    public int deleteTaskByTitle(String title) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        // Delete the task where the title matches
-        return db.delete(TABLE_NAME, "title = ?", new String[]{title});
-    }
-
 }
-
